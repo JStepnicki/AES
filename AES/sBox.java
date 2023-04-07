@@ -1,6 +1,6 @@
 public class sBox {
 
-
+    int Nb= 4;
     static int[][] sBox = {
             {0x63, 0x7c, 0x77, 0x7b, 0xf2, 0x6b, 0x6f, 0xc5, 0x30, 0x01, 0x67, 0x2b, 0xfe, 0xd7, 0xab, 0x76},
             {0xca, 0x82, 0xc9, 0x7d, 0xfa, 0x59, 0x47, 0xf0, 0xad, 0xd4, 0xa2, 0xaf, 0x9c, 0xa4, 0x72, 0xc0},
@@ -40,9 +40,9 @@ public class sBox {
 
 
 
-    static byte translate(byte b) {
-        int x = (b & 0b11110000) >> 4;
-        int y = b & 0b00001111;
+    static byte translate(byte b) { // dajemy bajt  z 8 bitow
+        int x = (b & 0b11110000) >> 4; // 4 bity starsze to numer wiersza (te z lewej)
+        int y = b & 0b00001111; // 4 mlodsze bity to numer kolumny sprytne  (te z prawej)
         return (byte) sBox[x][y];
     }
 
@@ -50,5 +50,14 @@ public class sBox {
         int x = (b & 0b11110000) >> 4;
         int y = b & 0b00001111;
         return (byte) inv_sbox[x][y];
+    }
+    public byte[][] subBytes(byte[][] state,boolean encryption) {
+        for (int i = 0; i < 4; i++)
+            for (int j = 0; j < Nb; j++)
+                if(encryption)
+                    state[i][j] = translate(state[i][j]);
+                else
+                    state[i][j] = translateReverse(state[i][j]);
+        return state;
     }
 }
