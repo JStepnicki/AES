@@ -60,4 +60,22 @@ public class sBox {
                     state[i][j] = translateReverse(state[i][j]);
         return state;
     }
+
+    public byte[][] ShiftRows (byte[][] state,boolean encryption) {
+        byte[] temp = new byte[Nb];
+        for (int i = 1; i < 4; i++){
+            for (int t = 0; t < Nb; t++)
+                temp[t] = state[i][t];// kopiujemy wiersz do przenoszenia
+            for (int j = 0; j < Nb; j++){
+
+                if(encryption)// i=1 j=3
+                    state[i][j] = temp[((i + j)%Nb)]; //przesuwamy cale wiersze o i miejsc w lewo
+                else
+                    state[i][j] = temp[(Nb+j-i)%Nb];//przesuwamy cale wiersze o i miejsc w prawo
+            }
+        }
+        return state;
+    }
+
+
 }
