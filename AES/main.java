@@ -1,5 +1,13 @@
 public class main {
-
+    public static void wyswietl(byte[][] array){
+        System.out.println();
+        for (int i = 0; i < array.length; i++) {
+            for (int j = 0; j < array[i].length; j++) {
+                System.out.print(array[i][j] + " ");
+            }
+            System.out.println();
+        }
+    }
 
     public static void main(String[] args) {
         byte[][] array = {
@@ -9,34 +17,14 @@ public class main {
                 {12, 13, 14, 15}
         };
 
-    sBox szyfr =  new sBox();
-    szyfr.subBytes(array,true);
-        for (int i = 0; i < array.length; i++) {
-            for (int j = 0; j < array[i].length; j++) {
-                System.out.print(array[i][j] + " ");
-            }
-            System.out.println();
-        }
-        szyfr.subBytes(array,false);
-        for (int i = 0; i < array.length; i++) {
-            for (int j = 0; j < array[i].length; j++) {
-                System.out.print(array[i][j] + " ");
-            }
-            System.out.println();
-        }
-        szyfr.ShiftRows(array,true);
-        for (int i = 0; i < array.length; i++) {
-            for (int j = 0; j < array[i].length; j++) {
-                System.out.print(array[i][j] + " ");
-            }
-            System.out.println();
-        }
-        szyfr.ShiftRows(array,false);
-        for (int i = 0; i < array.length; i++) {
-            for (int j = 0; j < array[i].length; j++) {
-                System.out.print(array[i][j] + " ");
-            }
-            System.out.println();
-        }
+
+    AES szyfr =  new AES();
+    MixColumns dupa = new MixColumns();
+    main.wyswietl(array);
+    dupa.mixColumns(array,true);
+    main.wyswietl(array);
+    dupa.mixColumns(array,false);
+    main.wyswietl(array);
+
 }
 }

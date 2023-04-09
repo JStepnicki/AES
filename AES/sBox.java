@@ -1,6 +1,6 @@
 public class sBox {
 
-    int Nb= 4;
+
     static int[][] sBox = {
             {0x63, 0x7c, 0x77, 0x7b, 0xf2, 0x6b, 0x6f, 0xc5, 0x30, 0x01, 0x67, 0x2b, 0xfe, 0xd7, 0xab, 0x76},
             {0xca, 0x82, 0xc9, 0x7d, 0xfa, 0x59, 0x47, 0xf0, 0xad, 0xd4, 0xa2, 0xaf, 0x9c, 0xa4, 0x72, 0xc0},
@@ -51,31 +51,7 @@ public class sBox {
         int y = b & 0b00001111;
         return (byte) inv_sbox[x][y];
     }
-    public byte[][] subBytes(byte[][] state,boolean encryption) {
-        for (int i = 0; i < 4; i++)
-            for (int j = 0; j < Nb; j++)
-                if(encryption)
-                    state[i][j] = translate(state[i][j]);
-                else
-                    state[i][j] = translateReverse(state[i][j]);
-        return state;
-    }
 
-    public byte[][] ShiftRows (byte[][] state,boolean encryption) {
-        byte[] temp = new byte[Nb];
-        for (int i = 1; i < 4; i++){
-            for (int t = 0; t < Nb; t++)
-                temp[t] = state[i][t];// kopiujemy wiersz do przenoszenia
-            for (int j = 0; j < Nb; j++){
-
-                if(encryption)// i=1 j=3
-                    state[i][j] = temp[((i + j)%Nb)]; //przesuwamy cale wiersze o i miejsc w lewo
-                else
-                    state[i][j] = temp[(Nb+j-i)%Nb];//przesuwamy cale wiersze o i miejsc w prawo
-            }
-        }
-        return state;
-    }
 
 
 }
