@@ -1,3 +1,5 @@
+import java.security.NoSuchAlgorithmException;
+
 public class main {
     public static void wyswietl(byte[][] array){
         System.out.println();
@@ -9,7 +11,7 @@ public class main {
         }
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws NoSuchAlgorithmException {
         byte[][] array = {
                 {0, 1, 2, 3},
                 {4, 5, 6, 7},
@@ -19,12 +21,17 @@ public class main {
 
 
     AES szyfr =  new AES();
-    MixColumns dupa = new MixColumns();
-    main.wyswietl(array);
-    dupa.mixColumns(array,true);
-    main.wyswietl(array);
-    dupa.mixColumns(array,false);
-    main.wyswietl(array);
+
+    szyfr.ShiftRows(array,true);
+    szyfr.subBytes(array,true);
+    szyfr.mixColumns(array,true);
+    wyswietl(array);
+
+    szyfr.mixColumns(array,false);
+    szyfr.subBytes(array,false);
+    szyfr.ShiftRows(array,false);
+    wyswietl(array);
+
 
 }
 }
