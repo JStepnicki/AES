@@ -19,7 +19,7 @@ public class main {
         }
 
 
-    public static void main(String[] args) throws NoSuchAlgorithmException {
+    public static void main(String[] args) throws Exception {
         byte[][] array = {
                 {0, 1, 2, 3},
                 {4, 5, 6, 7},
@@ -29,7 +29,7 @@ public class main {
         byte[] message = {
                 (byte) 0x32, (byte) 0x43, (byte) 0xF6, (byte) 0xA8,
                 (byte) 0x88, (byte) 0x5A, (byte) 0x30, (byte) 0x8D,
-                (byte) 0x31, (byte) 0x31, (byte) 0x98, (byte) 0xA2,
+                (byte) 0x21, (byte) 0x31, (byte) 0x98, (byte) 0xA2,
                 (byte) 0xE0, (byte) 0x37, (byte) 0x07, (byte) 0x34,
                 (byte) 0x32, (byte) 0x43, (byte) 0xF6, (byte) 0xA8,
                 (byte) 0x88, (byte) 0x5A, (byte) 0x30, (byte) 0x8D,
@@ -50,14 +50,13 @@ public class main {
         byte[] message3 = new byte[16];
 
     AES szyfr =  new AES();
-    key = szyfr.generateKey(192);
+    key = szyfr.generateKey(256);
 
         wyswietl2(message);
         message2 = szyfr.encryptMessage(message,key);
     wyswietl2(message2);
         message3 =szyfr.decryptMessage(message2,key);
     wyswietl2(message3);
-
 
 
 }

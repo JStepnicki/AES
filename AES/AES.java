@@ -5,40 +5,39 @@ import java.security.SecureRandom;
 
 public class AES {
     private final int Nb = 4; //Nb - liczba kolumn w macierzy state zawsze wynosi 4.
-    private int Nk=4;  //Nk - liczba 32-bitowych słów w kluczu; wynosi 4 dla 128-bitowego klucza, 6 dla 192-bitowego , a 8 dla 256-bitowego .
+    private int Nk;  //Nk - liczba 32-bitowych słów w kluczu; wynosi 4 dla 128-bitowego klucza, 6 dla 192-bitowego , a 8 dla 256-bitowego .
     private int Nr; //Nr - liczba rund (iteracji),10/12/14 zaleznie od dlugosci klucza
-    private  byte[][] mainKey;
+    private byte[][] mainKey; // klucze dor rund
 
 
-
-
-    public byte[] encryptMessage(byte[] inputMessage, byte[] encryptionKey) {
-        Nk = encryptionKey.length/4;
+    public byte[] encryptMessage(byte[] inputMessage, byte[] encryptionKey) throws Exception{
+        if(validateKey(encryptionKey)== false){
+            throw new Exception("nieprawidłowy klucz");
+        }
+        Nk = encryptionKey.length / 4;
         Nr = Nk + 6;
         int len;
-        int pom=inputMessage.length/16;
-        if (pom==0) len=16;
+        int pom = inputMessage.length / 16;
+        if (pom == 0) len = 16;
         else if ((inputMessage.length % 16) != 0)
-            len=(pom+1)*16;
-        else len=pom*16;
+            len = (pom + 1) * 16;
+        else len = pom * 16;
         byte[] result = new byte[len];
         byte[] temp = new byte[len];
         byte[] blok = new byte[16];
         mainKey = keyExpansionRoutine(encryptionKey);
-        for (int i = 0; i < len;i++)
-        { if(i<inputMessage.length) temp[i]=inputMessage[i];
-        else temp[i]=0;
+        for (int i = 0; i < len; i++) {
+            if (i < inputMessage.length) temp[i] = inputMessage[i];
+            else temp[i] = 0;
         }
-        for (int k = 0; k < temp.length;)
-        {
-            for (int j=0;j<16;j++) blok[j]=temp[k++];
+        for (int k = 0; k < temp.length; ){
+            for (int j = 0; j < 16; j++)
+                blok[j] = temp[k++];
             blok = encryptSingleBlock(blok);
-            System.arraycopy(blok, 0, result,k-16, blok.length);
-
+            System.arraycopy(blok, 0, result, k - 16, blok.length);
         }
         return result;
-            }
-
+    }
 
 
     public byte[] decryptMessage(byte[] inputMessage, byte[] decryptionKey) {
@@ -46,72 +45,66 @@ public class AES {
         byte[] tmpResult = new byte[inputMessage.length];
         byte[] blok = new byte[16];
         mainKey = keyExpansionRoutine(decryptionKey);
-        Nk = decryptionKey.length/4;
+        Nk = decryptionKey.length / 4;
         Nr = Nk + 6;
-        for (int i = 0; i < inputMessage.length;)
-        {
-            for (int j=0;j<16;j++) blok[j]=inputMessage[i++];
+        for (int i = 0; i < inputMessage.length; ) {
+            for (int j = 0; j < 16; j++) blok[j] = inputMessage[i++];
             blok = decryptSingleBlock(blok);
-            System.arraycopy(blok, 0, tmpResult,i-16, blok.length);
+            System.arraycopy(blok, 0, tmpResult, i - 16, blok.length);
         }
         int cnt = 0;
-        for (int i = 1; i < 17; i += 2)
-        {
+        for (int i = 1; i < 17; i += 2) {
             if (tmpResult[tmpResult.length - i] == 0 && tmpResult[tmpResult.length - i - 1] == 0)
                 cnt += 2;
-            else  break;
+            else break;
         }
         byte[] result = new byte[tmpResult.length - cnt];
         System.arraycopy(tmpResult, 0, result, 0, tmpResult.length - cnt);
         return result;
-        }
+    }
 
 
     public byte[] encryptSingleBlock(byte[] inputMessage) {
         byte[] result = new byte[16];
         byte[][] stateMatrix = new byte[4][4];
-        for (int i = 0; i < 16; i++) {
-            stateMatrix[i/4][i%4] = inputMessage[i];
-        }
+        for (int i = 0; i < 16; i++)
+            stateMatrix[i / 4][i % 4] = inputMessage[i];
         stateMatrix = addRoundKey(stateMatrix, mainKey, 0);
         for (int i = 1; i < Nr; i++) {
-            stateMatrix = subBytes(stateMatrix,true);
-            stateMatrix = shiftRows(stateMatrix,true);
-            stateMatrix = mixColumns(stateMatrix,true);
+            stateMatrix = subBytes(stateMatrix, true);
+            stateMatrix = shiftRows(stateMatrix, true);
+            stateMatrix = mixColumns(stateMatrix, true);
             stateMatrix = addRoundKey(stateMatrix, mainKey, i);
         }
-        stateMatrix = subBytes(stateMatrix,true);
-        stateMatrix = shiftRows(stateMatrix,true);
+        stateMatrix = subBytes(stateMatrix, true);
+        stateMatrix = shiftRows(stateMatrix, true);
         stateMatrix = addRoundKey(stateMatrix, mainKey, Nr);
-        for (int i = 0; i < 16; i++) {
-            result[i] = stateMatrix[i/4][i % 4];
-        }
+        for (int i = 0; i < 16; i++)
+            result[i] = stateMatrix[i / 4][i % 4];
         return result;
     }
 
     public byte[] decryptSingleBlock(byte[] inputMessage) {
         byte[] result = new byte[16];
         byte[][] stateMatrix = new byte[4][4];
-        for (int i = 0; i < 16; i++) {
+        for (int i = 0; i < 16; i++)
             stateMatrix[i >> 2][i & 3] = inputMessage[i];
-        }
         stateMatrix = addRoundKey(stateMatrix, mainKey, Nr);
         for (int i = Nr - 1; i > 0; i--) {
-
-            stateMatrix = subBytes(stateMatrix,false);
-            stateMatrix = shiftRows(stateMatrix,false);
+            stateMatrix = subBytes(stateMatrix, false);
+            stateMatrix = shiftRows(stateMatrix, false);
             stateMatrix = addRoundKey(stateMatrix, mainKey, i);
-            stateMatrix = mixColumns(stateMatrix,false);
+            stateMatrix = mixColumns(stateMatrix, false);
         }
-        stateMatrix = subBytes(stateMatrix,false);
-        stateMatrix = shiftRows(stateMatrix,false);
-
+        stateMatrix = subBytes(stateMatrix, false);
+        stateMatrix = shiftRows(stateMatrix, false);
         stateMatrix = addRoundKey(stateMatrix, mainKey, 0);
         for (int i = 0; i < 16; i++) {
             result[i] = stateMatrix[i >> 2][i & 3];
         }
         return result;
     }
+
     public byte[][] keyExpansionRoutine(byte[] inputKey) {
         byte[][] resultKeys = new byte[Nb * (Nr + 1)][4];
         int iterator = 0;
@@ -157,8 +150,8 @@ public class AES {
 
     public byte[] RotWord(byte[] inputByteArray) {
         byte[] output = new byte[inputByteArray.length];
-        for (int i=0;i<inputByteArray.length;i++){
-            output[i] = inputByteArray[(i+1)%inputByteArray.length];
+        for (int i = 0; i < inputByteArray.length; i++) {
+            output[i] = inputByteArray[(i + 1) % inputByteArray.length];
         }
         return output;
     }
@@ -166,7 +159,7 @@ public class AES {
     public byte[] SubWord(byte[] inputByteArray) {
         byte[] output = new byte[inputByteArray.length];
         for (int i = 0; i < inputByteArray.length; i++) {
-            output[i] = translate((inputByteArray[i]),true);
+            output[i] = translate((inputByteArray[i]), true);
         }
         return output;
     }
@@ -183,19 +176,10 @@ public class AES {
                 }
             }
         }
-        byte[] rCon = {(byte)roundCoefficient, 0, 0, 0};
+        byte[] rCon = {(byte) roundCoefficient, 0, 0, 0};
         return rCon;
     }
 
-
-    public byte[] generateKey(int size) throws NoSuchAlgorithmException {
-        KeyGenerator key = KeyGenerator.getInstance("AES");
-        SecureRandom random = new SecureRandom();
-        key.init(size,random);
-        SecretKey secretKey = key.generateKey();
-        byte [] key_in_bytes = secretKey.getEncoded();
-        return key_in_bytes;
-    }
 
     public byte[][] addRoundKey(byte[][] state, byte[][] key, int roundNumber) {
         byte[][] temp = new byte[state.length][state[0].length];
@@ -207,9 +191,6 @@ public class AES {
         return temp;
     }
 
-    public byte[][] invertedAddRoundKey(byte[][] stateMatrix, byte[][] inputKey, int roundNumber) {
-        return addRoundKey(stateMatrix, inputKey, roundNumber);
-    }
 
     public boolean validateKey(byte[] inputKey) {
         if (inputKey == null)
@@ -220,53 +201,31 @@ public class AES {
             return false;
     }
 
+    public byte[] generateKey(int size) throws NoSuchAlgorithmException {
+        KeyGenerator key = KeyGenerator.getInstance("AES");
+        SecureRandom random = new SecureRandom();
+        key.init(size, random);
+        SecretKey secretKey = key.generateKey();
+        byte[] key_in_bytes = secretKey.getEncoded();
+        return key_in_bytes;
+    }
 
-    public byte[][] shiftRows (byte[][] state,boolean encryption) {
+
+    public byte[][] shiftRows(byte[][] state, boolean encryption) {
         byte[] temp = new byte[4];
-        for (int i = 1; i < 4; i++){
+        for (int i = 1; i < 4; i++) {
             for (int t = 0; t < 4; t++)
                 temp[t] = state[i][t];// kopiujemy wiersz do przenoszenia
-            for (int j = 0; j < 4; j++){
-                if(encryption)//
-                    state[i][j] = temp[((i + j)%4)]; //przesuwamy cale wiersze o i miejsc w lewo
+            for (int j = 0; j < 4; j++) {
+                if (encryption)//
+                    state[i][j] = temp[((i + j) % 4)]; //przesuwamy cale wiersze o i miejsc w lewo
                 else
-                    state[i][j] = temp[(4+j-i)%4];//przesuwamy cale wiersze o i miejsc w prawo
+                    state[i][j] = temp[(4 + j - i) % 4];//przesuwamy cale wiersze o i miejsc w prawo
             }
         }
         return state;
     }
 
-
-    private final byte[][] Matrix = {
-            {0x02, 0x03, 0x01, 0x01},
-            {0x01, 0x02, 0x03, 0x01},
-            {0x01, 0x01, 0x02, 0x03},
-            {0x03, 0x01, 0x01, 0x02}
-    };
-
-    private final byte[][] invMatrix = {
-            {0x0E, 0x0B, 0x0D, 0x09},
-            {0x09, 0x0E, 0x0B, 0x0D},
-            {0x0D, 0x09, 0x0E, 0x0B},
-            {0x0B, 0x0D, 0x09, 0x0E}
-    };
-
-    public byte multiply(byte firstByte, byte secondByte) {
-        byte result = 0;
-        byte temp;
-        while (firstByte != 0) {
-            if ((firstByte & 1) != 0) {
-                result = (byte) (result ^ secondByte);
-            }
-            temp = (byte) (secondByte & 0x80);
-            secondByte = (byte) (secondByte << 1);
-            if (temp != 0) {
-                secondByte = (byte) (secondByte ^ 0x1B);
-            }
-            firstByte = (byte) ((firstByte & 0xFF) >> 1);
-        }
-        return result;
-    }
 
     public byte[][] mixColumns(byte[][] state, boolean encryption) {
         int[] temp = new int[4];
@@ -297,13 +256,47 @@ public class AES {
                 for (int j = 0; j < 4; j++) {
                     state[j][i] = (byte) temp[j];
                 }
-
             }
         }
-
         return state;
     }
 
+    public byte multiply(byte firstByte, byte secondByte) {
+        byte result = 0;
+        byte temp;
+        while (firstByte != 0) {
+            if ((firstByte & 1) != 0) {
+                result = (byte) (result ^ secondByte);
+            }
+            temp = (byte) (secondByte & 0x80);
+            secondByte = (byte) (secondByte << 1);
+            if (temp != 0) {
+                secondByte = (byte) (secondByte ^ 0x1B);
+            }
+            firstByte = (byte) ((firstByte & 0xFF) >> 1);
+        }
+        return result;
+    }
+
+
+    public byte[][] subBytes(byte[][] state, boolean encryption) {
+        for (int i = 0; i < 4; i++)
+            for (int j = 0; j < 4; j++)
+                if (encryption)
+                    state[i][j] = translate(state[i][j], true);
+                else
+                    state[i][j] = translate(state[i][j], false);
+        return state;
+    }
+
+    static byte translate(byte b, boolean encryption) { // dajemy bajt  z 8 bitow
+        int x = (b & 0b11110000) >> 4; // 4 bity starsze to numer wiersza (te z lewej)
+        int y = b & 0b00001111; // 4 mlodsze bity to numer kolumny  (te z prawej)
+        if (encryption)
+            return (byte) sBox[x][y];
+        else
+            return (byte) inv_sbox[x][y];
+    }
 
     static int[][] sBox = {
             {0x63, 0x7c, 0x77, 0x7b, 0xf2, 0x6b, 0x6f, 0xc5, 0x30, 0x01, 0x67, 0x2b, 0xfe, 0xd7, 0xab, 0x76},
@@ -343,27 +336,17 @@ public class AES {
     };
 
 
+    private final byte[][] Matrix = {
+            {0x02, 0x03, 0x01, 0x01},
+            {0x01, 0x02, 0x03, 0x01},
+            {0x01, 0x01, 0x02, 0x03},
+            {0x03, 0x01, 0x01, 0x02}
+    };
 
-    static byte translate(byte b,boolean encryption) { // dajemy bajt  z 8 bitow
-        int x = (b & 0b11110000) >> 4; // 4 bity starsze to numer wiersza (te z lewej)
-        int y = b & 0b00001111; // 4 mlodsze bity to numer kolumny  (te z prawej)
-        if(encryption)
-            return (byte) sBox[x][y];
-        else
-            return (byte) inv_sbox[x][y];
-
-    }
-
-
-
-    public byte[][] subBytes(byte[][] state,boolean encryption) {
-        for (int i = 0; i < 4; i++)
-            for (int j = 0; j < 4; j++)
-                if(encryption)
-                    state[i][j] = translate(state[i][j],true);
-                else
-                    state[i][j] = translate(state[i][j],false);
-        return state;
-    }
-
+    private final byte[][] invMatrix = {
+            {0x0E, 0x0B, 0x0D, 0x09},
+            {0x09, 0x0E, 0x0B, 0x0D},
+            {0x0D, 0x09, 0x0E, 0x0B},
+            {0x0B, 0x0D, 0x09, 0x0E}
+    };
 }
