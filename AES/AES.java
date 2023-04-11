@@ -13,85 +13,57 @@ public class AES {
 
 
     public byte[] encryptMessage(byte[] inputMessage, byte[] encryptionKey) {
+        Nk = encryptionKey.length/4;
+        Nr = Nk + 6;
+        int len;
+        int pom=inputMessage.length/16;
+        if (pom==0) len=16;
+        else if ((inputMessage.length % 16) != 0)
+            len=(pom+1)*16;
+        else len=pom*16;
+        byte[] result = new byte[len];
+        byte[] temp = new byte[len];
+        byte[] blok = new byte[16];
+        mainKey = keyExpansionRoutine(encryptionKey);
+        for (int i = 0; i < len;i++)
+        { if(i<inputMessage.length) temp[i]=inputMessage[i];
+        else temp[i]=0;
+        }
+        for (int k = 0; k < temp.length;)
+        {
+            for (int j=0;j<16;j++) blok[j]=temp[k++];
+            blok = encryptSingleBlock(blok);
+            System.arraycopy(blok, 0, result,k-16, blok.length);
 
-            // Ustalenie długości klucza oraz liczby rund, na podstawie podanego klucza
-            // Przypisanie wartości zmiennym Nk i Nr
-            Nk = encryptionKey.length >> 2;
-            Nr = Nk + 6;
-            // Sprawdznie czy użytkownik w ogóle podał jakąkolwiek wiadomość do zaszyfrowania
-
-
-                int messageLengthInBytes;                               // Zmienna przechowująca długość wiadomości w bajtach
-                int numberOfBlocksInMessage = inputMessage.length >> 4; // Zmienna przechowująca ilość 16 bajtowych ciągów w wiadomości
-                // Instrukcja warunkowa służąca określeniu, ile dokładnie bloków będzie potrzebnych do zaszyfrowania wiadomości
-                if (numberOfBlocksInMessage == 0) {
-                    messageLengthInBytes = 16;
-                    numberOfBlocksInMessage = 1;
-                } else if ((inputMessage.length & 15) != 0) {
-                    messageLengthInBytes = (numberOfBlocksInMessage + 1) * 16;
-                    numberOfBlocksInMessage++;
-                } else {
-                    messageLengthInBytes = numberOfBlocksInMessage * 16;
-                }
-                byte[] resultMessage = new byte[messageLengthInBytes + 16];
-                byte[] temporaryArr = new byte[messageLengthInBytes + 16];
-                // Generowanie kluczy wymaganych dla każdej rundy
-                mainKey = keyExpansionRoutine(encryptionKey);
-                // Instrukcja iteracyjna, która dopełni bazową wiadomość o zera na końcu, tak aby całą dłguość wiadomości była
-                // wielokrotnością długości bloku
-                int numberOfAddedBytes = (1 << 4);
-                for (int i = 0; i < messageLengthInBytes - 1; i++) {
-                    if (i < inputMessage.length) {
-                        temporaryArr[i] = inputMessage[i];
-                    } else {
-                        if (i == messageLengthInBytes - 1) {
-                            temporaryArr[i] = (byte) inputMessage.length;
-                        } else {
-                            temporaryArr[i] = 0;
-                            numberOfAddedBytes++;
-                        }
-                    }
-                }
-                temporaryArr[messageLengthInBytes - 1] = (byte) numberOfAddedBytes;
-
-                byte[] block = new byte[16];
-                /*
-                    Rozpoczynanie szyfrowania - dla każdego bloku wiadomości przeprowadzamy osobne szyfrowanie -
-                    wynik kopiujemy do tablicy zawierajacej wynik końcowy.
-                */
-                for (int i = 0; i < temporaryArr.length;) {
-                    for (int j = 0; j < 16; j++) {
-                        block[j] = temporaryArr[i];
-                        i++;
-                    }
-                    block = encryptSingleBlock(block);
-                    System.arraycopy(block, 0, resultMessage, i - 16, block.length);
-                }
-                return resultMessage;
+        }
+        return result;
             }
 
 
 
     public byte[] decryptMessage(byte[] inputMessage, byte[] decryptionKey) {
-         byte[] result = new byte[inputMessage.length];
-            byte[] block = new byte[16];
-            // Na podstawie długości klucza dedukowana jest ilość wymaganych rund.
-            Nk = decryptionKey.length >> 2;
-            Nr = Nk + 6;
-            // Generowanie podkluczy dla każdej rundy
-            mainKey = keyExpansionRoutine(decryptionKey);
-            for (int i = 0; i < inputMessage.length; ) {
-                for (int j = 0; j < 16; j++) {
-                    block[j] = inputMessage[i];
-                    i++;
-                }
-                block = decryptSingleBlock(block);
-                System.arraycopy(block, 0, result, i - 16, block.length);
-            }
-            int numberOfAddedZeros = result[result.length - 1];
-            byte[] finalResult = new byte[result.length - numberOfAddedZeros];
-            System.arraycopy(result, 0, finalResult, 0, result.length - numberOfAddedZeros);
-            return finalResult;
+
+        byte[] tmpResult = new byte[inputMessage.length];
+        byte[] blok = new byte[16];
+        mainKey = keyExpansionRoutine(decryptionKey);
+        Nk = decryptionKey.length/4;
+        Nr = Nk + 6;
+        for (int i = 0; i < inputMessage.length;)
+        {
+            for (int j=0;j<16;j++) blok[j]=inputMessage[i++];
+            blok = decryptSingleBlock(blok);
+            System.arraycopy(blok, 0, tmpResult,i-16, blok.length);
+        }
+        int cnt = 0;
+        for (int i = 1; i < 17; i += 2)
+        {
+            if (tmpResult[tmpResult.length - i] == 0 && tmpResult[tmpResult.length - i - 1] == 0)
+                cnt += 2;
+            else  break;
+        }
+        byte[] result = new byte[tmpResult.length - cnt];
+        System.arraycopy(tmpResult, 0, result, 0, tmpResult.length - cnt);
+        return result;
         }
 
 
@@ -99,7 +71,7 @@ public class AES {
         byte[] result = new byte[16];
         byte[][] stateMatrix = new byte[4][4];
         for (int i = 0; i < 16; i++) {
-            stateMatrix[i >> 2][i & 3] = inputMessage[i];
+            stateMatrix[i/4][i%4] = inputMessage[i];
         }
         stateMatrix = addRoundKey(stateMatrix, mainKey, 0);
         for (int i = 1; i < Nr; i++) {
@@ -112,7 +84,7 @@ public class AES {
         stateMatrix = shiftRows(stateMatrix,true);
         stateMatrix = addRoundKey(stateMatrix, mainKey, Nr);
         for (int i = 0; i < 16; i++) {
-            result[i] = stateMatrix[i >> 2][i & 3];
+            result[i] = stateMatrix[i/4][i % 4];
         }
         return result;
     }
@@ -123,16 +95,18 @@ public class AES {
         for (int i = 0; i < 16; i++) {
             stateMatrix[i >> 2][i & 3] = inputMessage[i];
         }
-        stateMatrix = invertedAddRoundKey(stateMatrix, mainKey, Nr);
+        stateMatrix = addRoundKey(stateMatrix, mainKey, Nr);
         for (int i = Nr - 1; i > 0; i--) {
-            stateMatrix = shiftRows(stateMatrix);
-            stateMatrix = invertedSubBytes(stateMatrix);
-            stateMatrix = invertedAddRoundKey(stateMatrix, mainKey, i);
-            stateMatrix = invertedMixColumns(stateMatrix);
+
+            stateMatrix = subBytes(stateMatrix,false);
+            stateMatrix = shiftRows(stateMatrix,false);
+            stateMatrix = addRoundKey(stateMatrix, mainKey, i);
+            stateMatrix = mixColumns(stateMatrix,false);
         }
-        stateMatrix = invertedShiftRows(stateMatrix);
-        stateMatrix = invertedSubBytes(stateMatrix);
-        stateMatrix = invertedAddRoundKey(stateMatrix, mainKey, 0);
+        stateMatrix = subBytes(stateMatrix,false);
+        stateMatrix = shiftRows(stateMatrix,false);
+
+        stateMatrix = addRoundKey(stateMatrix, mainKey, 0);
         for (int i = 0; i < 16; i++) {
             result[i] = stateMatrix[i >> 2][i & 3];
         }
@@ -214,10 +188,10 @@ public class AES {
     }
 
 
-    public byte[] generateKey() throws NoSuchAlgorithmException {
+    public byte[] generateKey(int size) throws NoSuchAlgorithmException {
         KeyGenerator key = KeyGenerator.getInstance("AES");
         SecureRandom random = new SecureRandom();
-        key.init(128,random);
+        key.init(size,random);
         SecretKey secretKey = key.generateKey();
         byte [] key_in_bytes = secretKey.getEncoded();
         return key_in_bytes;
