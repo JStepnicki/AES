@@ -58,6 +58,5 @@ public class main {
         message3 =szyfr.decryptMessage(message2,key);
     wyswietl2(message3);
 
-
 }
 }

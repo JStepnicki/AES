@@ -4,30 +4,36 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 
 public class AES {
-    private final int Nb = 4; //Nb - liczba kolumn w macierzy state zawsze wynosi 4.
+    private final int Nb = 4; //Nb - liczba kolumn w macierzy stanu zawsze wynosi 4.
     private int Nk;  //Nk - liczba 32-bitowych słów w kluczu; wynosi 4 dla 128-bitowego klucza, 6 dla 192-bitowego , a 8 dla 256-bitowego .
     private int Nr; //Nr - liczba rund (iteracji),10/12/14 zaleznie od dlugosci klucza
-    private byte[][] mainKey; // klucze dor rund
+    private byte[][] mainKey; // klucze do rund
 
 
-    public byte[] encryptMessage(byte[] inputMessage, byte[] encryptionKey) throws Exception{
-        if(validateKey(encryptionKey)== false){
+    public byte[] encryptMessage(byte[] message, byte[] encryptionKey) throws Exception{
+        if(!validateKey(encryptionKey)){
             throw new Exception("nieprawidłowy klucz");
+        }
+        if (message.length == 0) {
+            throw new Exception("Nie podano danych do odszyfrowania.");
         }
         Nk = encryptionKey.length / 4;
         Nr = Nk + 6;
-        int len;
-        int pom = inputMessage.length / 16;
-        if (pom == 0) len = 16;
-        else if ((inputMessage.length % 16) != 0)
-            len = (pom + 1) * 16;
-        else len = pom * 16;
-        byte[] result = new byte[len];
-        byte[] temp = new byte[len];
+        int msgLength;
+        int numberOfBlocks = message.length / 16;
+        if (numberOfBlocks == 0)
+            msgLength = 16;
+        else if ((message.length % 16) != 0)
+            msgLength = (numberOfBlocks + 1) * 16;
+
+        else msgLength = numberOfBlocks * 16;
+        byte[] result = new byte[msgLength];
+        byte[] temp = new byte[msgLength];
         byte[] blok = new byte[16];
         mainKey = keyExpansionRoutine(encryptionKey);
-        for (int i = 0; i < len; i++) {
-            if (i < inputMessage.length) temp[i] = inputMessage[i];
+        for (int i = 0; i < msgLength; i++) {
+            if (i < message.length)
+                temp[i] = message[i];
             else temp[i] = 0;
         }
         for (int k = 0; k < temp.length; ){
@@ -40,21 +46,26 @@ public class AES {
     }
 
 
-    public byte[] decryptMessage(byte[] inputMessage, byte[] decryptionKey) {
-
-        byte[] tmpResult = new byte[inputMessage.length];
+    public byte[] decryptMessage(byte[] message, byte[] decryptionKey) throws Exception {
+        if(!validateKey(decryptionKey)){
+            throw new Exception("nieprawidłowy klucz");
+        }
+        if (message.length == 0) {
+            throw new Exception("Nie podano danych do odszyfrowania.");
+        }
+        byte[] tmpResult = new byte[message.length];
         byte[] blok = new byte[16];
         mainKey = keyExpansionRoutine(decryptionKey);
         Nk = decryptionKey.length / 4;
         Nr = Nk + 6;
-        for (int i = 0; i < inputMessage.length; ) {
-            for (int j = 0; j < 16; j++) blok[j] = inputMessage[i++];
+        for (int i = 0; i < message.length; ) {
+            for (int j = 0; j < 16; j++) blok[j] = message[i++];
             blok = decryptSingleBlock(blok);
             System.arraycopy(blok, 0, tmpResult, i - 16, blok.length);
         }
         int cnt = 0;
         for (int i = 1; i < 17; i += 2) {
-            if (tmpResult[tmpResult.length - i] == 0 && tmpResult[tmpResult.length - i - 1] == 0)
+            if (tmpResult[tmpResult.length - i] == 0 && tmpResult[tmpResult.length - i - 1] == 0)//sprawdazamy ile jest par zer do usuniecia z konca
                 cnt += 2;
             else break;
         }
@@ -64,11 +75,11 @@ public class AES {
     }
 
 
-    public byte[] encryptSingleBlock(byte[] inputMessage) {
+    public byte[] encryptSingleBlock(byte[] message) {
         byte[] result = new byte[16];
         byte[][] stateMatrix = new byte[4][4];
         for (int i = 0; i < 16; i++)
-            stateMatrix[i / 4][i % 4] = inputMessage[i];
+            stateMatrix[i / 4][i % 4] = message[i];
         stateMatrix = addRoundKey(stateMatrix, mainKey, 0);
         for (int i = 1; i < Nr; i++) {
             stateMatrix = subBytes(stateMatrix, true);
@@ -84,11 +95,11 @@ public class AES {
         return result;
     }
 
-    public byte[] decryptSingleBlock(byte[] inputMessage) {
+    public byte[] decryptSingleBlock(byte[] message) {
         byte[] result = new byte[16];
         byte[][] stateMatrix = new byte[4][4];
         for (int i = 0; i < 16; i++)
-            stateMatrix[i >> 2][i & 3] = inputMessage[i];
+            stateMatrix[i / 4][i % 4] = message[i];
         stateMatrix = addRoundKey(stateMatrix, mainKey, Nr);
         for (int i = Nr - 1; i > 0; i--) {
             stateMatrix = subBytes(stateMatrix, false);
@@ -100,7 +111,7 @@ public class AES {
         stateMatrix = shiftRows(stateMatrix, false);
         stateMatrix = addRoundKey(stateMatrix, mainKey, 0);
         for (int i = 0; i < 16; i++) {
-            result[i] = stateMatrix[i >> 2][i & 3];
+            result[i] = stateMatrix[i/4][i % 4];
         }
         return result;
     }
@@ -195,10 +206,7 @@ public class AES {
     public boolean validateKey(byte[] inputKey) {
         if (inputKey == null)
             return false;
-        if (inputKey.length == 16 || inputKey.length == 24 || inputKey.length == 32)
-            return true;
-        else
-            return false;
+        return inputKey.length == 16 || inputKey.length == 24 || inputKey.length == 32;
     }
 
     public byte[] generateKey(int size) throws NoSuchAlgorithmException {
