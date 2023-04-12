@@ -12,15 +12,15 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<VBox alignment="CENTER" centerShape="false" prefHeight="571.0" prefWidth="836.0" spacing="20.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.view.HelloController">
+<VBox alignment="CENTER" centerShape="false" prefHeight="743.0" prefWidth="1096.0" spacing="20.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.view.HelloController">
     <padding>
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
     </padding>
-   <GridPane prefHeight="480.0" prefWidth="796.0">
+   <GridPane alignment="TOP_CENTER" nodeOrientation="LEFT_TO_RIGHT" prefHeight="480.0" prefWidth="796.0">
      <columnConstraints>
        <ColumnConstraints hgrow="SOMETIMES" maxWidth="327.0" minWidth="10.0" prefWidth="256.0" />
-       <ColumnConstraints hgrow="SOMETIMES" maxWidth="298.0" minWidth="10.0" prefWidth="285.0" />
-         <ColumnConstraints hgrow="SOMETIMES" maxWidth="277.0" minWidth="10.0" prefWidth="255.0" />
+       <ColumnConstraints hgrow="SOMETIMES" maxWidth="327.0" minWidth="10.0" prefWidth="327.0" />
+         <ColumnConstraints hgrow="SOMETIMES" maxWidth="277.0" minWidth="10.0" prefWidth="248.0" />
      </columnConstraints>
      <rowConstraints>
        <RowConstraints maxHeight="154.0" minHeight="10.0" prefHeight="145.0" vgrow="SOMETIMES" />
@@ -28,18 +28,18 @@
        <RowConstraints maxHeight="144.0" minHeight="10.0" prefHeight="56.0" vgrow="SOMETIMES" />
      </rowConstraints>
       <children>
-         <TextArea fx:id="normalText" prefHeight="257.0" prefWidth="268.0" GridPane.rowIndex="1" />
-         <TextArea fx:id="cipheredText" prefHeight="257.0" prefWidth="201.0" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+         <TextArea fx:id="normalText" prefHeight="273.0" prefWidth="368.0" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
+         <TextArea fx:id="cipheredText" prefHeight="273.0" prefWidth="236.0" GridPane.columnIndex="2" GridPane.rowIndex="1" />
          <ButtonBar prefHeight="40.0" prefWidth="200.0" GridPane.columnIndex="1">
             <buttons>
-               <GridPane prefHeight="154.0" prefWidth="304.0">
+               <GridPane prefHeight="147.0" prefWidth="478.0">
                  <columnConstraints>
                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                  </columnConstraints>
                  <rowConstraints>
                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                   <RowConstraints maxHeight="45.0" minHeight="10.0" prefHeight="45.0" vgrow="SOMETIMES" />
+                   <RowConstraints maxHeight="64.0" minHeight="10.0" prefHeight="63.0" valignment="CENTER" vgrow="SOMETIMES" />
                  </rowConstraints>
                   <children>
                      <GridPane GridPane.rowIndex="1">
@@ -57,12 +57,12 @@
                            <Button mnemonicParsing="false" onAction="#generateKey256" prefHeight="25.0" prefWidth="159.0" text="256 bit" GridPane.columnIndex="2" />
                         </children>
                      </GridPane>
-                     <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Wygeneruj klucz:" textAlignment="CENTER" wrappingWidth="268.2109375">
+                     <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Wygeneruj klucz:" textAlignment="CENTER" wrappingWidth="268.2109375" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
                         <font>
                            <Font size="29.0" />
                         </font>
                      </Text>
-                     <TextArea fx:id="keyField" prefHeight="51.0" prefWidth="425.0" wrapText="true" GridPane.rowIndex="2" />
+                     <TextArea fx:id="keyField" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="64.0" prefWidth="370.0" wrapText="true" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
                   </children>
                </GridPane>
             </buttons>
@@ -82,7 +82,7 @@
          </GridPane>
          <Button fx:id="saveToFileButton" mnemonicParsing="false" onAction="#saveToFile" text="Zapisz informacje o szyfrowaniu" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
          <Button mnemonicParsing="false" onAction="#saveEncryptedToFile" text="Zapisz zaszyfrowany tekst" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
-         <GridPane>
+         <GridPane prefHeight="114.0" prefWidth="268.0">
            <columnConstraints>
              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
            </columnConstraints>
@@ -94,7 +94,7 @@
                <Button fx:id="loadNormalText" mnemonicParsing="false" onAction="#readFromFileNormal" text="Wczytaj z pliku tekst" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
             </children>
          </GridPane>
-         <GridPane GridPane.columnIndex="2">
+         <GridPane prefHeight="148.0" prefWidth="366.0" GridPane.columnIndex="2">
            <columnConstraints>
              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
            </columnConstraints>
