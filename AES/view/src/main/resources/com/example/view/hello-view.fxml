@@ -5,7 +5,6 @@
 <?import javafx.scene.control.ButtonBar?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextArea?>
-<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
@@ -29,8 +28,8 @@
        <RowConstraints maxHeight="144.0" minHeight="10.0" prefHeight="13.0" vgrow="SOMETIMES" />
      </rowConstraints>
       <children>
-         <TextArea prefHeight="257.0" prefWidth="268.0" GridPane.rowIndex="1" />
-         <TextArea prefHeight="257.0" prefWidth="201.0" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+         <TextArea fx:id="normalText" prefHeight="257.0" prefWidth="268.0" GridPane.rowIndex="1" />
+         <TextArea fx:id="cipheredText" prefHeight="257.0" prefWidth="201.0" GridPane.columnIndex="2" GridPane.rowIndex="1" />
          <ButtonBar prefHeight="40.0" prefWidth="200.0" GridPane.columnIndex="1">
             <buttons>
                <GridPane prefHeight="154.0" prefWidth="304.0">
@@ -53,9 +52,9 @@
                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                        </rowConstraints>
                         <children>
-                           <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="131.0" text="128bit" />
-                           <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="111.0" text="192bit" GridPane.columnIndex="1" />
-                           <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="159.0" text="256bit" GridPane.columnIndex="2" />
+                           <Button mnemonicParsing="false" onAction="#generateKey128" prefHeight="25.0" prefWidth="131.0" text="128bit" />
+                           <Button mnemonicParsing="false" onAction="#generateKey192" prefHeight="25.0" prefWidth="111.0" text="192bit" GridPane.columnIndex="1" />
+                           <Button mnemonicParsing="false" onAction="#generateKey256" prefHeight="25.0" prefWidth="159.0" text="256bit" GridPane.columnIndex="2" />
                         </children>
                      </GridPane>
                      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Wygeneruj klucz:" textAlignment="CENTER" wrappingWidth="268.2109375">
@@ -63,7 +62,7 @@
                            <Font size="29.0" />
                         </font>
                      </Text>
-                     <TextField GridPane.rowIndex="2" />
+                     <TextArea fx:id="keyField" prefHeight="51.0" prefWidth="425.0" wrapText="true" GridPane.rowIndex="2" />
                   </children>
                </GridPane>
             </buttons>
@@ -77,8 +76,8 @@
              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
            </rowConstraints>
             <children>
-               <Button alignment="CENTER" mnemonicParsing="false" prefHeight="52.0" prefWidth="397.0" text="Szyfruj" textAlignment="CENTER" />
-               <Button mnemonicParsing="false" prefHeight="64.0" prefWidth="285.0" text="Deszyfruj" GridPane.rowIndex="1" />
+               <Button alignment="CENTER" mnemonicParsing="false" onAction="#encrypt" prefHeight="52.0" prefWidth="397.0" text="Szyfruj" textAlignment="CENTER" />
+               <Button mnemonicParsing="false" onAction="#decrypt" prefHeight="64.0" prefWidth="285.0" text="Deszyfruj" GridPane.rowIndex="1" />
             </children>
          </GridPane>
       </children>
