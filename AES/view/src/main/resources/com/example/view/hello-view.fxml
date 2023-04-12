@@ -24,8 +24,8 @@
      </columnConstraints>
      <rowConstraints>
        <RowConstraints maxHeight="154.0" minHeight="10.0" prefHeight="145.0" vgrow="SOMETIMES" />
-       <RowConstraints maxHeight="286.0" minHeight="10.0" prefHeight="231.0" vgrow="SOMETIMES" />
-       <RowConstraints maxHeight="144.0" minHeight="10.0" prefHeight="13.0" vgrow="SOMETIMES" />
+       <RowConstraints maxHeight="294.0" minHeight="10.0" prefHeight="270.0" vgrow="SOMETIMES" />
+       <RowConstraints maxHeight="144.0" minHeight="10.0" prefHeight="56.0" vgrow="SOMETIMES" />
      </rowConstraints>
       <children>
          <TextArea fx:id="normalText" prefHeight="257.0" prefWidth="268.0" GridPane.rowIndex="1" />
@@ -52,9 +52,9 @@
                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                        </rowConstraints>
                         <children>
-                           <Button mnemonicParsing="false" onAction="#generateKey128" prefHeight="25.0" prefWidth="131.0" text="128bit" />
-                           <Button mnemonicParsing="false" onAction="#generateKey192" prefHeight="25.0" prefWidth="111.0" text="192bit" GridPane.columnIndex="1" />
-                           <Button mnemonicParsing="false" onAction="#generateKey256" prefHeight="25.0" prefWidth="159.0" text="256bit" GridPane.columnIndex="2" />
+                           <Button mnemonicParsing="false" onAction="#generateKey128" prefHeight="25.0" prefWidth="131.0" text="128 bit" />
+                           <Button mnemonicParsing="false" onAction="#generateKey192" prefHeight="25.0" prefWidth="111.0" text="192 bit" GridPane.columnIndex="1" />
+                           <Button mnemonicParsing="false" onAction="#generateKey256" prefHeight="25.0" prefWidth="159.0" text="256 bit" GridPane.columnIndex="2" />
                         </children>
                      </GridPane>
                      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Wygeneruj klucz:" textAlignment="CENTER" wrappingWidth="268.2109375">
@@ -76,13 +76,39 @@
              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
            </rowConstraints>
             <children>
-               <Button alignment="CENTER" mnemonicParsing="false" onAction="#encrypt" prefHeight="52.0" prefWidth="397.0" text="Szyfruj" textAlignment="CENTER" />
-               <Button mnemonicParsing="false" onAction="#decrypt" prefHeight="64.0" prefWidth="285.0" text="Deszyfruj" GridPane.rowIndex="1" />
+               <Button alignment="CENTER" mnemonicParsing="false" onAction="#encrypt" prefHeight="52.0" prefWidth="164.0" text="Szyfruj" textAlignment="CENTER" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
+               <Button mnemonicParsing="false" onAction="#decrypt" prefHeight="49.0" prefWidth="160.0" text="Deszyfruj" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
             </children>
          </GridPane>
+         <Button fx:id="saveToFileButton" mnemonicParsing="false" onAction="#saveToFile" text="Zapisz informacje o szyfrowaniu" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
+         <Button mnemonicParsing="false" onAction="#saveEncryptedToFile" text="Zapisz zaszyfrowany tekst" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
+         <GridPane>
+           <columnConstraints>
+             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+           </columnConstraints>
+           <rowConstraints>
+             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+           </rowConstraints>
+            <children>
+               <Button fx:id="loadNormalText" mnemonicParsing="false" onAction="#readFromFileNormal" text="Wczytaj z pliku tekst" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
+            </children>
+         </GridPane>
+         <GridPane GridPane.columnIndex="2">
+           <columnConstraints>
+             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+           </columnConstraints>
+           <rowConstraints>
+             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+           </rowConstraints>
+            <children>
+               <Button fx:id="loadCipheredText" mnemonicParsing="false" onAction="#readFromFileEncrypted" text="Wczytaj z pliku zaszyfrowany tekst" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
+            </children>
+         </GridPane>
+         <Button mnemonicParsing="false" text="pusty przycisk  dla symetrii :)" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
       </children>
    </GridPane>
 
     <Label fx:id="welcomeText" />
-    <Button onAction="#onHelloButtonClick" text="Hello!" />
 </VBox>
