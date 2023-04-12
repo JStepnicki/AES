@@ -1,10 +1,4 @@
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Base64;
+package com.example.view;
 
 public class main {
     public static void wyswietl2(byte[] array){
@@ -16,9 +10,9 @@ public class main {
 
 
     public static void main(String[] args) throws Exception {
-       // input.manualInput();
+       // algorithm.input.manualInput();
         input.fileInput();
 
 
-}
+    }
 }
