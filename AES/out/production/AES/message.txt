@@ -1,0 +1,1 @@
+tu mozna wpisywac kod aby czytal z pliku

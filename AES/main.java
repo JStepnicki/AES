@@ -1,6 +1,10 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Base64;
 
 public class main {
     public static void wyswietl2(byte[] array){
@@ -12,16 +16,9 @@ public class main {
 
 
     public static void main(String[] args) throws Exception {
-        fileInput.manualInput();
+       // input.manualInput();
+        input.fileInput();
 
 
-        //String path = "D:/test.txt";
-      //  fileInput dupa =new fileInput(path);
-      //  byte[] fileInputPlainText = dupa.readBytesFromFile();
-
-       // fileInputPlainText = szyfr.encryptMessage(fileInputPlainText, szyfr.generateKey(256));
-        //fileInputPlainText = szyfr.decryptMessage(fileInputPlainText, szyfr.generateKey(256));
-        //String plainText = new String(dupa.convertByteArrayToHex(fileInputPlainText));
-        //System.out.println(plainText);
 }
 }
