@@ -64,10 +64,10 @@ public class AES {
             System.arraycopy(blok, 0, tmpResult, i - 16, blok.length);
         }
         int cnt = 0;
-        for (int i = 1; i < 17; i += 2) {
-            if (tmpResult[tmpResult.length - i] == 0 && tmpResult[tmpResult.length - i - 1] == 0)//sprawdazamy ile jest par zer do usuniecia z konca
-                cnt += 2;
-            else break;
+        int i = tmpResult.length - 1;
+        while (i >= 0 && tmpResult[i] == 0) {
+            cnt++;
+            i--;
         }
         byte[] result = new byte[tmpResult.length - cnt];
         System.arraycopy(tmpResult, 0, result, 0, tmpResult.length - cnt);
@@ -222,8 +222,8 @@ public class AES {
     public byte[][] shiftRows(byte[][] state, boolean encryption) {
         byte[] temp = new byte[4];
         for (int i = 1; i < 4; i++) {
-            for (int t = 0; t < 4; t++)
-                temp[t] = state[i][t];// kopiujemy wiersz do przenoszenia
+            // kopiujemy wiersz do przenoszenia
+            System.arraycopy(state[i], 0, temp, 0, 4);
             for (int j = 0; j < 4; j++) {
                 if (encryption)//
                     state[i][j] = temp[((i + j) % 4)]; //przesuwamy cale wiersze o i miejsc w lewo
