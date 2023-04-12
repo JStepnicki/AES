@@ -13,12 +13,12 @@ public class HelloController {
 
     AES dupa = new AES();
 
-    final byte[] keyInBytes = dupa.generateKey(128);
+    //final byte[] keyInBytes = dupa.generateKey(128);
     @FXML
     private Label welcomeText;
 
     @FXML
-    private TextField keyField;
+    private TextArea keyField;
 
     @FXML
     private TextArea normalText;
@@ -59,8 +59,8 @@ public class HelloController {
         String toEncrypt = normalText.getText();
         String key = keyField.getText();
         byte[] messageInBytes = toEncrypt.getBytes(StandardCharsets.UTF_8);
-        //byte[] keyInBytes = Base64.getDecoder().decode(key);
-        byte[] encryptedMessageInBytes = dupa.encryptMessage(messageInBytes,keyInBytes);
+        byte[] keyInBytes = Base64.getDecoder().decode(key);
+        byte[] encryptedMessageInBytes = Base64.getEncoder().encode(dupa.encryptMessage(messageInBytes,keyInBytes));
         String encryptedMessage = new String(encryptedMessageInBytes,StandardCharsets.UTF_8);
         cipheredText.setText(encryptedMessage);
     }
@@ -69,8 +69,8 @@ public class HelloController {
     protected void decrypt() throws Exception {
         String toDecrypt = cipheredText.getText();
         String key = keyField.getText();
-        byte[] messageInBytes = toDecrypt.getBytes(StandardCharsets.UTF_8);
-        //byte[] keyInBytes = Base64.getDecoder().decode(key);
+        byte[] messageInBytes = Base64.getDecoder().decode(toDecrypt.getBytes(StandardCharsets.UTF_8));
+        byte[] keyInBytes = Base64.getDecoder().decode(key);
         byte[] decryptedMessageInbytes = dupa.decryptMessage(messageInBytes,keyInBytes);
         String decryptedMessage = new String(decryptedMessageInbytes,StandardCharsets.UTF_8);
         normalText.setText(decryptedMessage);
