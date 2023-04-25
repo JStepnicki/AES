@@ -1,20 +1,17 @@
 package com.example.view;
 
+import AES.AES;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.stage.FileChooser;
-
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 
-public class ApplicationController {
+public class AppController {
 
     private AES aes = new AES();
     private FileChooser fileChooser = new FileChooser();
@@ -24,7 +21,7 @@ public class ApplicationController {
     @FXML
     private TextArea keyField;
 
-    public ApplicationController() throws NoSuchAlgorithmException {
+    public AppController() throws NoSuchAlgorithmException {
     }
 
 

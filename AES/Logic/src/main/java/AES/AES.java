@@ -1,4 +1,4 @@
-package com.example.view;
+package AES;
 
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
