@@ -9,7 +9,7 @@ public class AES {
     private final int Nb = 4; //Nb - liczba kolumn w macierzy stanu zawsze wynosi 4.
     private int Nk;  //Nk - liczba 32-bitowych słów w kluczu; wynosi 4 dla 128-bitowego klucza, 6 dla 192-bitowego , a 8 dla 256-bitowego .
     private int Nr; //Nr - liczba rund (iteracji),10/12/14 zaleznie od dlugosci klucza
-    private byte[][] mainKey; // klucze do rund
+    private byte[][] mainKey; // klucze do rundS
 
 
     public byte[] encryptMessage(byte[] message, byte[] encryptionKey) throws Exception{

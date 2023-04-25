@@ -5,6 +5,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 
 public class input {
@@ -59,4 +60,22 @@ public class input {
         mesByte= szyfr.decryptMessage(mesByte,keyByte);
         System.out.println("Odszyfrowana wiadomość: " + new String(mesByte, StandardCharsets.UTF_8));
     }
+
+    public static void binaryInput(String sciezka) throws Exception {
+        byte[] content = Files.readAllBytes(Paths.get(sciezka));
+        AES szyfr =  new AES();
+        byte[] key = szyfr.generateKey(192);
+        byte[] encryptedMessage = szyfr.encryptMessage(content,key);
+        OutputStream outputStream = new FileOutputStream("SZYFROWANY");
+        outputStream.write(encryptedMessage, 0,encryptedMessage.length);
+
+
+        byte[] encryptedFromFile = Files.readAllBytes(Paths.get("SZYFROWANY"));
+        byte[] decryptedMessage = szyfr.decryptMessage(encryptedFromFile,key);
+        OutputStream outputStream2 = new FileOutputStream("odszyfrowany.exe");
+        outputStream2.write(decryptedMessage, 0,decryptedMessage.length);
+    }
+
+
+
 }
